@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from .routes import users
+from .routes import db
+from .schema import user
 
 
 
@@ -14,7 +16,7 @@ def create_app()->FastAPI:
   
 
   app.include_router(users.router)
-#  app.include_router(auth.router)
+  app.include_router(db.router)
 
   return app
 

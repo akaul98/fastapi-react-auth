@@ -1,7 +1,7 @@
 from sqlalchemy import Column,String,Boolean,DateTime
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.sql import func
-from app.database import Base
+from database import Base
 from enum import Enum
 
 class ThemeEnum(str,Enum):

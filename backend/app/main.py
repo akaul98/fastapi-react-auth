@@ -15,7 +15,7 @@ def create_app()->FastAPI:
   )
   
 
-  app.include_router(users.router)
+  app.include_router(users.router, prefix="/api/users", tags=["users"])
   app.include_router(db.router)
 
   return app

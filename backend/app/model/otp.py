@@ -12,7 +12,7 @@ class OTP(Base):
     code: Mapped[str] = mapped_column(String(5))
   
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow
+        DateTime, default=datetime.now
     )
     expires_at: Mapped[datetime] = mapped_column(DateTime)
     used: Mapped[bool] = mapped_column(Boolean, default=False)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String,Boolean,DateTime, ForeignKey
+from sqlalchemy import String,Boolean,DateTime, ForeignKey
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.sql import func
 from database import Base

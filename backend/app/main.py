@@ -1,7 +1,6 @@
 from fastapi import FastAPI
-from .routes import users
-from .routes import db
-from .schema import user
+from app.api.v1.routes import users
+from app.api.v1.routes import db
 
 
 

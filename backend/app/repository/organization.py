@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from backend.app.model.organization import Organization
+from app.model.organization import Organization
 
 class OrganizationRepository:
     def __init__(self, db: AsyncSession):
@@ -10,4 +10,4 @@ class OrganizationRepository:
         result = await self.db.execute(
             select(Organization).where(Organization.id == org_id)
         )
-        org = result.scalar_one_or_none()
+        return result.scalar_one_or_none()

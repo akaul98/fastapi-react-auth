@@ -1,14 +1,14 @@
 from sqlalchemy import String,Boolean,DateTime, ForeignKey
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.sql import func
-from database import Base
+from app.database import Base
 from enum import Enum
 from sqlalchemy.orm import Mapped,mapped_column,relationship
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 
 if TYPE_CHECKING:
-    from .organzation import Organization
+    from .organization import Organization
 
 class ThemeEnum(str,Enum):
   light="light"

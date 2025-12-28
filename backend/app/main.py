@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.api.v1.routes import users
-from backend.app.api.v1.routes import organzations
+from app.api.v1.routes import organization
 
 
 
@@ -15,7 +15,7 @@ def create_app()->FastAPI:
   
 
   app.include_router(users.router, prefix="/api/users", tags=["users"])
-  app.include_router(organzations.router, prefix="/api/organzations", tags=["organzations"])
+  app.include_router(organization.router, prefix="/api/organizations", tags=["organizations"])
 
   return app
 

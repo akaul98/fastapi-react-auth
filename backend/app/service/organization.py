@@ -1,11 +1,13 @@
-
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.schema.organization.main import OrganizationResponse
-from backend.app.repository.organization import OrganizationRepository
+from app.repository.organization import OrganizationRepository
 
-class OrganizationService:    
-    async def get_org(org_id: int) -> OrganizationResponse:
-        org_repo = OrganizationRepository()
-        org = await org_repo.get_org_by_id(org_id)
+class OrganizationService:
+    def __init__(self, db: AsyncSession):
+        self.repo = OrganizationRepository(db)
+
+    async def get_org(self, org_id: int) -> OrganizationResponse:
+        org = await self.repo.get_org_by_id(org_id)
         if not org:
             raise ValueError("Organization not found")
-        return OrganizationResponse.from_orm(org)
+        return OrganizationResponse.model_validate(org)

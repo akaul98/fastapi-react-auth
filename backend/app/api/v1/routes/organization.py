@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.get("/{org_id}",response_model=OrganizationResponse)
-async def list_organizations(db: AsyncSession = Depends(get_db), org_id: str = None):
+async def list_organizations(db: AsyncSession = Depends(get_db), org_id: str = ""):
     logger.info(f"Fetching organization with ID: {org_id}")
     try:
         result = await OrganizationService(db).get_org(org_id)

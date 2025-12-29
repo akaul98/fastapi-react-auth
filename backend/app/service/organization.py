@@ -13,5 +13,5 @@ class OrganizationService:
         return OrganizationResponse.model_validate(org)
     
     async def create_org(self, org_data: OrganizationCreate) -> OrganizationResponse:
-        org = await self.repo.create_org(org_data.model_dump())
+        org = await self.repo.create_org(org_data)
         return OrganizationResponse.model_validate(org)

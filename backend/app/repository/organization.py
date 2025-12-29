@@ -6,7 +6,7 @@ class OrganizationRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_org_by_id(self, org_id: int) -> Organization | None:
+    async def get_org_by_id(self, org_id: str) -> Organization | None:
         result = await self.db.execute(
             select(Organization).where(Organization.id == org_id)
         )

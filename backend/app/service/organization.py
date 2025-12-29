@@ -6,7 +6,7 @@ class OrganizationService:
     def __init__(self, db: AsyncSession):
         self.repo = OrganizationRepository(db)
 
-    async def get_org(self, org_id: int) -> OrganizationResponse:
+    async def get_org(self, org_id: str) -> OrganizationResponse:
         org = await self.repo.get_org_by_id(org_id)
         if not org:
             raise ValueError("Organization not found")

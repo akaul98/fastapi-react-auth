@@ -18,9 +18,8 @@ class OrganizationResponse(BaseModel):
   org_website:Optional[str]
   status:bool
   created_at:datetime
-  updated_at:datetime
- 
-class Config:
-  from_attributes = True
+  updated_at:Optional[datetime]
+  class Config:
+    from_attributes = True
 
   

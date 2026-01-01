@@ -28,3 +28,33 @@ async def create_organization(org: OrganizationCreate, db: AsyncSession = Depend
         return await OrganizationService(db).create_org(org)
     except ValueError as e:
         raise HTTPException(400, str(e))
+    
+
+@router.get("/",response_model=list[OrganizationResponse])
+async def get_organizations(db: AsyncSession = Depends(get_db)):
+    logger.info("Fetching all organizations")
+    orgs = await OrganizationService(db).repo.get_all_orgs()
+    logger.debug(f"Organizations found: {orgs}")
+    return [OrganizationResponse.model_validate(org) for org in orgs]
+
+@router.delete("/{org_id}",response_model=dict)
+async def delete_organization(org_id: str, db: AsyncSession = Depends(get_db)):
+    logger.info(f"Deleting organization with ID: {org_id}")
+    try:
+        await OrganizationService(db).repo.delete_org(org_id)
+        logger.debug(f"Organization deleted: {org_id}")
+        return {"detail": "Organization deleted"}
+    except ValueError as e:
+        logger.error(f"Error deleting organization with ID: {org_id}, Error: {str(e)}")
+        raise HTTPException(404, str(e))
+    
+@router.put("/{org_id}",response_model=OrganizationResponse)
+async def update_organization(org_id: str, org: OrganizationCreate, db: AsyncSession = Depends(get_db)):
+    logger.info(f"Updating organization with ID: {org_id}")
+    try:
+        updated_org = await OrganizationService(db).repo.update_org(org_id, org)
+        logger.debug(f"Organization updated: {updated_org}")
+        return OrganizationResponse.model_validate(updated_org)
+    except ValueError as e:
+        logger.error(f"Error updating organization with ID: {org_id}, Error: {str(e)}")
+        raise HTTPException(404, str(e))

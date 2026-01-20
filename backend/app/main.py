@@ -2,6 +2,7 @@ import logging
 from fastapi import FastAPI
 from app.api.v1.routes import users
 from app.api.v1.routes import organization
+from fastapi.middleware.cors import CORSMiddleware
 
 # Configure logging
 logging.basicConfig(
@@ -9,6 +10,9 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+orgins=["*"]
+
 
 
 
@@ -22,6 +26,15 @@ def create_app()->FastAPI:
     docs_url="/api/docs",
     debug=True,
   )
+
+  app.add_middleware(
+      CORSMiddleware,
+      allow_origins=orgins,
+      allow_credentials=True,
+      allow_methods=["*"],
+      allow_headers=["*"],
+  )
+
 
   # Middleware for logging requests (useful for debugging)
   @app.middleware("http")

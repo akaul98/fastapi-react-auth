@@ -17,14 +17,11 @@ class ThemeEnum(str,Enum):
   
 class User(Base):
     __tablename__ = "users"
-
     id: Mapped[str] = mapped_column(String, primary_key=True, index=True)
-
     organization_id: Mapped[str] = mapped_column(
         ForeignKey("organizations.id"),
         nullable=False
     )
-
     email: Mapped[str] = mapped_column(String, unique=True)
     phone: Mapped[str] = mapped_column(String)
     status: Mapped[bool] = mapped_column(Boolean, default=True)

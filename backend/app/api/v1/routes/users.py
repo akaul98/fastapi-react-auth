@@ -1,23 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from backend.app.database import get_db
+from backend.app.schema.users.main import UserResponse
+from backend.app.service.userService import UserService
 
 router=APIRouter()
 
-@router.get("/")
-async def read_user():
-  return [{"Name":"Jon Doe"},{"Name":"Jane Doe"}]
-
-@router.get("/id/")
-async def read_user_by_id():
-  return [{"Name:Jon Doe"},{"Name":"Jane Doe"}]
-
-@router.post("create")
-async def create_user():
-  return [{"Name:Jon Doe"},{"Name":"Jane Doe"}]
-
-@router.put("update")
-async def update_user():
-  return [{"Name:Jon Doe"},{"Name":"Jane Doe"}]
-
-@router.delete("delete")
-async def delete_user():
-  return [{"Name:Jon Doe"},{"Name":"Jane Doe"}]
+@router.get("/{org_id}",response_model=list[UserResponse])
+async def getAllUsers(db:AsyncSession  = Depends(get_db),org_id:str=""):
+  users=await UserService(db).get_all_users(org_id)
+  return [UserResponse.model_validate(user) for user in users]

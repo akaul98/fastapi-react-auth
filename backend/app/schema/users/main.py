@@ -7,6 +7,7 @@ from datetime import datetime
 class UserCreate(BaseModel):
   id:str
   organization_id:str
+  name:str
   email:str
   phone:Optional[str]
   status:bool
@@ -16,6 +17,7 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
   id:str
   organization_id:str
+  name:str
   email:str
   phone:Optional[str]
   status:bool

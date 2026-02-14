@@ -2,7 +2,7 @@ import logging
 from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.schema.organization.main import OrganizationCreate, OrganizationResponse
+from app.schema.organization import OrganizationCreate, OrganizationResponse
 from app.service.organization import OrganizationService
 
 logger = logging.getLogger(__name__)

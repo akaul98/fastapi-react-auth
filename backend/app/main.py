@@ -1,7 +1,6 @@
 import logging
 from fastapi import FastAPI
-from app.api.v1.routes import users
-from app.api.v1.routes import organization
+from app.api.v1.routes import users,organization,otp
 from fastapi.middleware.cors import CORSMiddleware
 
 # Configure logging
@@ -47,7 +46,8 @@ def create_app()->FastAPI:
 
   app.include_router(users.router, prefix="/api/users", tags=["users"])
   app.include_router(organization.router, prefix="/api/organizations", tags=["organizations"])
-
+  app.include_router(otp.router, prefix="/api/otp", tags=["otp"])
+  
   logger.info("FastAPI application created successfully")
   return app
 

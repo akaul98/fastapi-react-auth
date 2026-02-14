@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import update
 from app.model.organization import Organization
-from app.schema.organization.main import OrganizationCreate
+from app.schema.organization import OrganizationCreate
 
 class OrganizationRepository:
     def __init__(self, db: AsyncSession):

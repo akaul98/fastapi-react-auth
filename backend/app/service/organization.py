@@ -1,6 +1,7 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.schema.organization.main import OrganizationResponse,OrganizationCreate
+
+from app.schema.organization import OrganizationResponse,OrganizationCreate
 from app.repository.organization import OrganizationRepository
+from sqlalchemy.ext.asyncio import AsyncSession
 
 class OrganizationService:
     def __init__(self, db: AsyncSession):

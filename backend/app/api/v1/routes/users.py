@@ -28,7 +28,7 @@ async def createUser(user_data:UserCreate, db:AsyncSession  = Depends(get_db)):
   user=await UserService(db).create_user(user_data)
   return UserResponse.model_validate(user)
 
-@router.put("/updateUser/{user_id}/{org_id}",response_model=UserResponse)
+@router.put("/updateUser/",response_model=UserResponse)
 async def updateUser(user_data:UserCreate, db:AsyncSession  = Depends(get_db),user_id:str="",org_id:str=""):
   return await UserService(db).update_user(user_id,org_id,user_data)
   

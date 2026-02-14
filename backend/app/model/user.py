@@ -22,6 +22,7 @@ class User(Base):
         ForeignKey("organizations.id"),
         nullable=False
     )
+    name: Mapped[str] = mapped_column(String)
     email: Mapped[str] = mapped_column(String, unique=True)
     phone: Mapped[str] = mapped_column(String)
     status: Mapped[bool] = mapped_column(Boolean, default=True)

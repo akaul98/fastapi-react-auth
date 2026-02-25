@@ -31,16 +31,15 @@ class OtpRepository:
         
         # Create OTP record
         otp_id = str(uuid.uuid4())
-        otp_record = OTP(
-            id=otp_id,
-            user_id=user_id,
-            organization_id=organization_id,
-            phone=phone_number,
-            code=otp_code,
-            status=OTPStatusEnum.PENDING,
-            created_at=datetime.now(),
-            expires_at=datetime.now() + timedelta(minutes=5)  # OTP expires in 5 minutes
-        )
+        otp_record = OTP()
+        otp_record.id = otp_id
+        otp_record.user_id = user_id
+        otp_record.organization_id = organization_id
+        otp_record.phone = phone_number
+        otp_record.code = otp_code
+        otp_record.status = OTPStatusEnum.PENDING
+        otp_record.created_at = datetime.now()
+        otp_record.expires_at = datetime.now() + timedelta(minutes=5)  # OTP expires in 5 minutes
         
         self.db.add(otp_record)
         await self.db.commit()

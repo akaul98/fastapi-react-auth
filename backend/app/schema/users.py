@@ -1,6 +1,6 @@
 
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
 
@@ -8,7 +8,7 @@ class UserCreate(BaseModel):
   id:str
   organization_id:str
   name:str
-  email:str
+  email:EmailStr
   phone:Optional[str]
   status:bool
   theme:Optional[str]
@@ -18,7 +18,7 @@ class UserResponse(BaseModel):
   id:str
   organization_id:str
   name:str
-  email:str
+  email:EmailStr
   phone:Optional[str]
   status:bool
   created_at:datetime

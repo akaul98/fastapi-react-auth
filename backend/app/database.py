@@ -1,13 +1,12 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
+from dotenv import load_dotenv
 import os
 
+load_dotenv()
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://admin:admin@127.0.0.1:5432/db"
-)
-
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://myuser:mypassword@127.0.0.1:5432/mydatabase")
+print(f"Using database URL: {DATABASE_URL}")
 engine = create_async_engine(
     DATABASE_URL,
     echo=True  # SQL logs (disable in prod)

@@ -15,7 +15,13 @@ class OrganizationRepository:
         return result.scalar_one_or_none()
     
     async def create_org(self, org_data: OrganizationCreate) -> Organization:
-        new_org = Organization(org_data)
+        # build Organization from pydantic model fields
+        try:
+            payload = org_data.model_dump()
+        except Exception:
+            raise ValueError("Invalid organization data")
+        new_org = Organization(**payload)
+        print(f"Creating organization: {new_org}")
         self.db.add(new_org)
         await self.db.commit()
         await self.db.refresh(new_org)

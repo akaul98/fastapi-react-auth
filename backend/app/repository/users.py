@@ -28,11 +28,11 @@ class UserRepository:
             await self.db.commit()
 
     async def create_user(self, user_data: UserCreate) -> UserResponse:
-        new_user = UserResponse(**user_data.model_dump())
+        new_user = User(**user_data.model_dump())
         self.db.add(new_user)
         await self.db.commit()
         await self.db.refresh(new_user)
-        return new_user
+        return UserResponse.model_validate(new_user)
     
     async def update_user(self, user_id: str, org_id: str, user_data: UserCreate) -> UserResponse | None:
         user = await self.get_user_by_id(user_id, org_id)

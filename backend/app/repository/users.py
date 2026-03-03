@@ -1,4 +1,5 @@
 
+import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,6 +30,7 @@ class UserRepository:
 
     async def create_user(self, user_data: UserCreate) -> UserResponse:
         new_user = User(**user_data.model_dump())
+        new_user.id = str(uuid.uuid4())
         self.db.add(new_user)
         await self.db.commit()
         await self.db.refresh(new_user)

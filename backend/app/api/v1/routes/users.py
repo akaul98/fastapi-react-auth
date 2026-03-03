@@ -12,19 +12,21 @@ async def getAllUsers(db:AsyncSession  = Depends(get_db),org_id:str=""):
   
 
 
-@router.get("/getUserById/{user_id}/{org_id}",response_model=UserResponse)
+@router.get("/{user_id}/{org_id}",response_model=UserResponse)
 async def getUserById(db:AsyncSession  = Depends(get_db),user_id:str="",org_id:str=""):
   return await  UserService(db).get_user_by_id(user_id,org_id)
   
 
-@router.delete("/deleteUserById/{user_id}/{org_id}")
+@router.delete("/{user_id}/{org_id}")
 async def deleteUserById(db:AsyncSession  = Depends(get_db),user_id:str="",org_id:str=""):
   return await UserService(db).delete_user_by_id(user_id,org_id)
-@router.post("/createUser",response_model=UserResponse)
+
+
+@router.post("/",response_model=UserResponse)
 async def createUser(user_data:UserCreate, db:AsyncSession  = Depends(get_db)):
   return await UserService(db).create_user(user_data)
   
-@router.put("/updateUser/{user_id}/{org_id}",response_model=UserResponse)
+@router.put("/{user_id}/{org_id}",response_model=UserResponse)
 async def updateUser(user_data:UserCreate, db:AsyncSession  = Depends(get_db),user_id:str="",org_id:str=""):
   return await UserService(db).update_user(user_id,org_id,user_data)
   

@@ -5,12 +5,10 @@ from datetime import datetime
 
 
 class UserCreate(BaseModel):
-  id:str
   organization_id:str
   name:str
   email:EmailStr
   phone:Optional[str]
-  status:bool
   theme:Optional[str]
 
 

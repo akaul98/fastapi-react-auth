@@ -1,3 +1,4 @@
+import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import update
@@ -20,6 +21,7 @@ class OrganizationRepository:
             payload = org_data.model_dump()
         except Exception:
             raise ValueError("Invalid organization data")
+        payload['id'] = str(uuid.uuid4())
         new_org = Organization(**payload)
         self.db.add(new_org)
         await self.db.commit()

@@ -8,7 +8,7 @@ from app.service.otp import OtpService
 router = APIRouter()
 
 
-@router.post("/sendOtp", response_model=OtpResponse)
+@router.post("/send", response_model=OtpResponse)
 async def send_otp(otp_request: OtpRequest, db: AsyncSession = Depends(get_db)):
     """
     Send OTP endpoint
@@ -34,7 +34,7 @@ async def send_otp(otp_request: OtpRequest, db: AsyncSession = Depends(get_db)):
         )
 
 
-@router.post("/verifyOtp", response_model=OtpResponse)
+@router.post("/verify", response_model=OtpResponse)
 async def verify_otp(otp_verify: OtpVerifyRequest, db: AsyncSession = Depends(get_db)):
     """
     Verify OTP endpoint

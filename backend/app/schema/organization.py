@@ -1,15 +1,22 @@
 
 from typing import Optional
-from pydantic import BaseModel
 from datetime import datetime
 
+from app.schema.base import BaseSchema
 
-class OrganizationCreate(BaseModel):
+
+class OrganizationCreate(BaseSchema):
   org_code:str
   org_name:str
   org_website:Optional[str]
 
-class OrganizationResponse(BaseModel):
+class OrganizationUpdate(BaseSchema):
+  org_code:Optional[str]
+  org_name:Optional[str]
+  org_website:Optional[str]
+  status:Optional[bool]
+
+class OrganizationResponse(BaseSchema):
   id:str
   org_code:str
   org_name:str

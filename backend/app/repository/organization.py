@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import update
 from app.model.organization import Organization
-from app.schema.organization import OrganizationCreate
+from app.schema.organization import OrganizationCreate, OrganizationUpdate
 
 class OrganizationRepository:
     def __init__(self, db: AsyncSession):
@@ -38,10 +38,10 @@ class OrganizationRepository:
             await self.db.execute(update(Organization).where(Organization.id == org_id).values(status=False))
             await self.db.commit()
 
-    async def update_org(self, org_id: str, org_data: OrganizationCreate) -> Organization:
+    async def update_org(self, org_id: str, org_data: OrganizationUpdate) -> Organization:
         org = await self.get_org_by_id(org_id)
         if org:
-            for key, value in org_data.model_dump().items():
+            for key, value in org_data.model_dump(exclude_unset=True).items():
                 setattr(org, key, value)
             self.db.add(org)
             await self.db.commit()

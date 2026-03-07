@@ -2,7 +2,7 @@ import logging
 from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.schema.organization import OrganizationCreate, OrganizationResponse
+from app.schema.organization import OrganizationCreate, OrganizationResponse, OrganizationUpdate
 from app.service.organization import OrganizationService
 
 logger = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ async def delete_organization(org_id: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(404, str(e))
     
 @router.put("update_org/{org_id}",response_model=OrganizationResponse)
-async def update_organization(org_id: str, org: OrganizationCreate, db: AsyncSession = Depends(get_db)):
+async def update_organization(org_id: str, org: OrganizationUpdate, db: AsyncSession = Depends(get_db)):
     logger.info(f"Updating organization with ID: {org_id}")
     try:
         updated_org = await OrganizationService(db).update_org(org_id, org)

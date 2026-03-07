@@ -1,5 +1,5 @@
 
-from app.schema.organization import OrganizationResponse,OrganizationCreate
+from app.schema.organization import OrganizationResponse,OrganizationCreate, OrganizationUpdate
 from app.repository.organization import OrganizationRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,7 +27,7 @@ class OrganizationService:
             raise ValueError("Organization not found")
         await self.repo.delete_org(org_id)
     
-    async def update_org(self, org_id: str, org_data: OrganizationCreate) -> OrganizationResponse:
+    async def update_org(self, org_id: str, org_data: OrganizationUpdate) -> OrganizationResponse:
         org = await self.repo.get_org_by_id(org_id)
         if not org:
             raise ValueError("Organization not found")

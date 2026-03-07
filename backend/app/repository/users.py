@@ -19,7 +19,7 @@ class UserRepository:
         return list(result.scalars().all())
     
     async def get_user_by_id(self, user_id: str, org_id: str) -> UserResponse | None:
-        result =await self.db.execute(select(User).where((User.id == user_id) & (User.organization_id == org_id)))
+        result =await self.db.execute(select(User).where((User.id == user_id) & (User.organization_id == org_id)& (User.status == True)))
         return result.scalars().first()
     
     async def delete_user_by_id(self, user_id: str, org_id: str) -> None:
@@ -39,7 +39,7 @@ class UserRepository:
     async def update_user(self, user_id: str, org_id: str, user_data: UserUpdate) -> UserResponse | None:
         user = await self.get_user_by_id(user_id, org_id)
         if user:
-            for key, value in user_data.model_dump().items():
+            for key, value in user_data.model_dump(exclude_unset=True).items():
                 setattr(user, key, value)
             await self.db.commit()
             await self.db.refresh(user)

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.get("/{org_id}",response_model=OrganizationResponse)
+@router.get("get_org_list_by_id/{org_id}",response_model=OrganizationResponse)
 async def list_organizations(db: AsyncSession = Depends(get_db), org_id: str = ""):
     logger.info(f"Fetching organization with ID: {org_id}")
     try:
@@ -22,7 +22,7 @@ async def list_organizations(db: AsyncSession = Depends(get_db), org_id: str = "
         logger.error(f"Organization not found: {org_id}, Error: {str(e)}")
         raise HTTPException(404, str(e))
     
-@router.post("/",response_model=OrganizationResponse)
+@router.post("create_org",response_model=OrganizationResponse)
 async def create_organization(org: OrganizationCreate, db: AsyncSession = Depends(get_db)):
     try:
         return await OrganizationService(db).create_org(org)
@@ -30,14 +30,14 @@ async def create_organization(org: OrganizationCreate, db: AsyncSession = Depend
         raise HTTPException(400, str(e))
     
 
-@router.get("/",response_model=list[OrganizationResponse])
+@router.get("get_org_list",response_model=list[OrganizationResponse])
 async def get_organizations(db: AsyncSession = Depends(get_db)):
     logger.info("Fetching all organizations")
     orgs = await OrganizationService(db).repo.get_all_orgs()
     logger.debug(f"Organizations found: {orgs}")
     return [OrganizationResponse.model_validate(org) for org in orgs]
 
-@router.delete("/{org_id}",response_model=dict)
+@router.delete("delete_org/{org_id}",response_model=dict)
 async def delete_organization(org_id: str, db: AsyncSession = Depends(get_db)):
     logger.info(f"Deleting organization with ID: {org_id}")
     try:
@@ -48,7 +48,7 @@ async def delete_organization(org_id: str, db: AsyncSession = Depends(get_db)):
         logger.error(f"Error deleting organization with ID: {org_id}, Error: {str(e)}")
         raise HTTPException(404, str(e))
     
-@router.put("/{org_id}",response_model=OrganizationResponse)
+@router.put("update_org/{org_id}",response_model=OrganizationResponse)
 async def update_organization(org_id: str, org: OrganizationCreate, db: AsyncSession = Depends(get_db)):
     logger.info(f"Updating organization with ID: {org_id}")
     try:

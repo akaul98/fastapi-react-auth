@@ -3,7 +3,7 @@ from sqlalchemy import select, and_
 from app.model.otp import OTP, OTPStatusEnum
 from app.model.user import User
 from app.model.organization import Organization
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import secrets
 import uuid
 
@@ -38,8 +38,8 @@ class OtpRepository:
         otp_record.phone = phone_number
         otp_record.code = otp_code
         otp_record.status = OTPStatusEnum.PENDING
-        otp_record.created_at = datetime.now()
-        otp_record.expires_at = datetime.now() + timedelta(minutes=5)  # OTP expires in 5 minutes
+        otp_record.created_at = datetime.now(timezone.utc)
+        otp_record.expires_at = datetime.now(timezone.utc) + timedelta(minutes=5)  # OTP expires in 5 minutes
         
         self.db.add(otp_record)
         await self.db.commit()

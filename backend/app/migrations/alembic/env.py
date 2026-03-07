@@ -14,6 +14,7 @@ from app.database import Base
 from app.model.user import User
 from app.model.organization import Organization
 from app.model.otp import OTP
+from app.model.revoked_token import RevokedToken  # noqa: F401
 
 config = context.config
 

@@ -1,60 +1,27 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from app.database import get_db
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.schema.otp import OtpRequest, OtpVerifyRequest, OtpResponse
-from app.service.otp import OtpService
 
+from app.database import get_db
+from app.limiter import limiter
+from app.schema.otp import OtpRequest, OtpResponse, OtpVerifyRequest
+from app.service.otp import OtpService
 
 router = APIRouter()
 
 
 @router.post("/send", response_model=OtpResponse)
-async def send_otp(otp_request: OtpRequest, db: AsyncSession = Depends(get_db)):
-    """
-    Send OTP endpoint
-    - Validates organization and user
-    - Generates 5-digit OTP
-    - Stores in database
-    """
+@limiter.limit("5/minute")
+async def send_otp(request: Request, otp_request: OtpRequest, db: AsyncSession = Depends(get_db)):
     try:
-        result = await OtpService(db).send_otp(otp_request)
-        return OtpResponse(
-            message=result["message"],
-            otp_id=result["otp_id"]
-        )
+        return await OtpService(db).send_otp(otp_request)
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to send OTP: {str(e)}"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.post("/verify", response_model=OtpResponse)
-async def verify_otp(otp_verify: OtpVerifyRequest, db: AsyncSession = Depends(get_db)):
-    """
-    Verify OTP endpoint
-    - Validates OTP code
-    - Updates OTP status to verified
-    - Returns verification result
-    """
+@limiter.limit("10/minute")
+async def verify_otp(request: Request, otp_verify: OtpVerifyRequest, db: AsyncSession = Depends(get_db)):
     try:
-        result = await OtpService(db).verify_otp(otp_verify)
-        return OtpResponse(
-            message=result["message"],
-            otp_id=result["otp_id"]
-        )
+        return await OtpService(db).verify_otp(otp_verify)
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to verify OTP: {str(e)}"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

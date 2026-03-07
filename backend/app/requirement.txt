@@ -4,7 +4,10 @@ python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
 pydantic[email]
+pydantic-settings
+slowapi
 pytest
+pytest-asyncio
 httpx
 sqlalchemy
 asyncpg

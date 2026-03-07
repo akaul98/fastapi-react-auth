@@ -1,60 +1,71 @@
 import logging
-from fastapi import APIRouter, Depends,HTTPException
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.database import get_db
+from app.dependencies.auth import get_current_user
 from app.schema.organization import OrganizationCreate, OrganizationResponse
 from app.service.organization import OrganizationService
 
 logger = logging.getLogger(__name__)
 
-
-
 router = APIRouter()
 
-@router.get("/{org_id}",response_model=OrganizationResponse)
-async def list_organizations(db: AsyncSession = Depends(get_db), org_id: str = ""):
-    logger.info(f"Fetching organization with ID: {org_id}")
+
+@router.get("/{org_id}", response_model=OrganizationResponse)
+async def get_organization(
+    org_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
     try:
-        result = await OrganizationService(db).get_org(org_id)
-        logger.debug(f"Organization found: {result}")
-        return result
+        return await OrganizationService(db).get_org(org_id)
     except ValueError as e:
-        logger.error(f"Organization not found: {org_id}, Error: {str(e)}")
         raise HTTPException(404, str(e))
-    
-@router.post("/",response_model=OrganizationResponse)
-async def create_organization(org: OrganizationCreate, db: AsyncSession = Depends(get_db)):
+
+
+@router.post("/", response_model=OrganizationResponse)
+async def create_organization(
+    org: OrganizationCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
     try:
         return await OrganizationService(db).create_org(org)
     except ValueError as e:
         raise HTTPException(400, str(e))
-    
 
-@router.get("/",response_model=list[OrganizationResponse])
-async def get_organizations(db: AsyncSession = Depends(get_db)):
-    logger.info("Fetching all organizations")
-    orgs = await OrganizationService(db).repo.get_all_orgs()
-    logger.debug(f"Organizations found: {orgs}")
-    return [OrganizationResponse.model_validate(org) for org in orgs]
 
-@router.delete("/{org_id}",response_model=dict)
-async def delete_organization(org_id: str, db: AsyncSession = Depends(get_db)):
-    logger.info(f"Deleting organization with ID: {org_id}")
+@router.get("/", response_model=list[OrganizationResponse])
+async def list_organizations(
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    return await OrganizationService(db).get_all_orgs()
+
+
+@router.delete("/{org_id}")
+async def delete_organization(
+    org_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
     try:
-        await OrganizationService(db).repo.delete_org(org_id)
-        logger.debug(f"Organization deleted: {org_id}")
+        await OrganizationService(db).delete_org(org_id)
         return {"detail": "Organization deleted"}
     except ValueError as e:
-        logger.error(f"Error deleting organization with ID: {org_id}, Error: {str(e)}")
         raise HTTPException(404, str(e))
-    
-@router.put("/{org_id}",response_model=OrganizationResponse)
-async def update_organization(org_id: str, org: OrganizationCreate, db: AsyncSession = Depends(get_db)):
-    logger.info(f"Updating organization with ID: {org_id}")
+
+
+@router.put("/{org_id}", response_model=OrganizationResponse)
+async def update_organization(
+    org_id: str,
+    org: OrganizationCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
     try:
-        updated_org = await OrganizationService(db).repo.update_org(org_id, org)
-        logger.debug(f"Organization updated: {updated_org}")
-        return OrganizationResponse.model_validate(updated_org)
+        return await OrganizationService(db).update_org(org_id, org)
     except ValueError as e:
-        logger.error(f"Error updating organization with ID: {org_id}, Error: {str(e)}")
         raise HTTPException(404, str(e))

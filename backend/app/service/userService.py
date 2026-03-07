@@ -27,6 +27,6 @@ class UserService:
         user = await self.repo.create_user(user_data)
         return UserResponse.model_validate(user)
     
-    async def update_user(self, user_id: str, org_id: str, user_data: UserCreate) -> UserResponse:
+    async def update_user(self, user_id: str, org_id: str, user_data: UserUpdate) -> UserResponse:
         user = await self.repo.update_user(user_id, org_id, user_data)
         return UserResponse.model_validate(user)

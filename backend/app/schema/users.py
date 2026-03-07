@@ -11,6 +11,12 @@ class UserCreate(BaseModel):
   phone:Optional[str]
   theme:Optional[str]
 
+class UserUpdate(BaseModel):
+  name:Optional[str]
+  email:Optional[EmailStr]
+  phone:Optional[str]
+  theme:Optional[str]
+
 
 class UserResponse(BaseModel):
   id:str

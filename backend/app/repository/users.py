@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schema.users import UserCreate, UserResponse
+from app.schema.users import UserCreate, UserResponse, UserUpdate
 from app.model.user import User
 class UserRepository:
     def __init__(self, db: AsyncSession):
@@ -36,7 +36,7 @@ class UserRepository:
         await self.db.refresh(new_user)
         return UserResponse.model_validate(new_user)
     
-    async def update_user(self, user_id: str, org_id: str, user_data: UserCreate) -> UserResponse | None:
+    async def update_user(self, user_id: str, org_id: str, user_data: UserUpdate) -> UserResponse | None:
         user = await self.get_user_by_id(user_id, org_id)
         if user:
             for key, value in user_data.model_dump().items():

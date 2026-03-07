@@ -34,7 +34,7 @@ class UserRepository:
         self.db.add(new_user)
         await self.db.commit()
         await self.db.refresh(new_user)
-        return UserResponse.model_validate(new_user)
+        return new_user
     
     async def update_user(self, user_id: str, org_id: str, user_data: UserUpdate) -> UserResponse | None:
         user = await self.get_user_by_id(user_id, org_id)

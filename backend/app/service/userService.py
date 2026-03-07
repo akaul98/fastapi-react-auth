@@ -1,7 +1,4 @@
-from curses.ascii import US
-
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.repository.users import UserRepository
 from app.schema.users import UserCreate, UserResponse,UserUpdate
 
@@ -23,7 +20,7 @@ class UserService:
         user = await self.repo.get_user_by_id(user_id, org_id)
         if user:
             user.status = False
-            await self.db.commit()
+            await self.repo.delete_user_by_id(user_id, org_id)
         return UserResponse.model_validate(user)
 
     async def create_user(self, user_data: UserCreate) -> UserResponse:

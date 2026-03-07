@@ -24,7 +24,6 @@ class OrganizationResponse(BaseSchema):
   status:bool
   created_at:datetime
   updated_at:Optional[datetime]
-  class Config:
-    from_attributes = True
+
 
   

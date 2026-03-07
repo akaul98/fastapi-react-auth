@@ -1,8 +1,9 @@
+import time
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 from app.model.otp import OTP, OTPStatusEnum
 from app.model.user import User
-from app.model.organization import Organization
 from datetime import datetime, timedelta, timezone
 import secrets
 import uuid
@@ -66,14 +67,14 @@ class OtpRepository:
             return None
         
         # Check if OTP has expired
-        if datetime.now() > otp_record.expires_at:
+        if datetime.now(timezone.utc) > otp_record.expires_at:
             otp_record.status = OTPStatusEnum.EXPIRED
             await self.db.commit()
             return None
         
         # Mark OTP as verified
         otp_record.status = OTPStatusEnum.VERIFIED
-        otp_record.verified_at = datetime.now()
+        otp_record.verified_at = datetime.now(timezone.utc)
         await self.db.commit()
         await self.db.refresh(otp_record)
         

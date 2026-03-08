@@ -7,7 +7,7 @@ from app.schema.auth import LoginRequest
 from app.schema.otp import OtpVerifyRequest
 import os
 
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "change-me-in-production")
+SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
 REFRESH_TOKEN_EXPIRE_DAYS = 7

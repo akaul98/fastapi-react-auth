@@ -13,3 +13,4 @@ python-dotenv
 alembic
 aiosqlite
 greenlet
+slowapi

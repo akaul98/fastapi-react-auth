@@ -1,4 +1,5 @@
 import logging
+import os
 from fastapi import FastAPI
 from app.api.v1.routes import users, organization, otp, auth
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,9 +10,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-orgins=["*"]
-
 
 
 
@@ -28,7 +26,7 @@ def create_app()->FastAPI:
 
   app.add_middleware(
       CORSMiddleware,
-      allow_origins=orgins,
+      allow_origins=os.getenv("CORS_ORIGINS", "*").split(","),
       allow_credentials=True,
       allow_methods=["*"],
       allow_headers=["*"],

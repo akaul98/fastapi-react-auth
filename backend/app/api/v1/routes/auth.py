@@ -1,15 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.schema.auth import LoginRequest, RefreshRequest, TokenResponse
 from app.schema.otp import OtpResponse, OtpVerifyRequest
 from app.service.auth import AuthService
+from app.core.limiter import limiter
 
 router = APIRouter()
 
-
 @router.post("/login", response_model=OtpResponse)
-async def login(login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")
+async def login(request: Request, login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
     try:
         result = await AuthService(db).login(login_data)
         return OtpResponse(**result)
@@ -18,7 +19,8 @@ async def login(login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/verify", response_model=TokenResponse)
-async def verify_otp(otp_verify: OtpVerifyRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")
+async def verify_otp(request: Request, otp_verify: OtpVerifyRequest, db: AsyncSession = Depends(get_db)):
     try:
         result = await AuthService(db).verify_and_generate_tokens(otp_verify)
         return TokenResponse(**result)
@@ -27,7 +29,8 @@ async def verify_otp(otp_verify: OtpVerifyRequest, db: AsyncSession = Depends(ge
 
 
 @router.post("/refresh", response_model=TokenResponse)
-async def refresh_token(refresh_request: RefreshRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("10/minute")
+async def refresh_token(request: Request, refresh_request: RefreshRequest, db: AsyncSession = Depends(get_db)):
     try:
         result = await AuthService(db).refresh_token(refresh_request.refresh_token)
         return TokenResponse(**result)

@@ -3,6 +3,12 @@ import os
 from fastapi import FastAPI
 from app.api.v1.routes import users, organization, otp, auth
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import  _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from app.core.limiter import limiter
+from backend import app
 
 # Configure logging
 logging.basicConfig(
@@ -24,6 +30,13 @@ def create_app()->FastAPI:
     debug=True,
   )
 
+
+
+  app.state.limiter = limiter
+  app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
+
+
+  app.add_middleware(SlowAPIMiddleware)
   app.add_middleware(
       CORSMiddleware,
       allow_origins=os.getenv("CORS_ORIGINS", "*").split(","),

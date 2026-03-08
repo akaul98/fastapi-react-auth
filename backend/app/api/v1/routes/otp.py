@@ -1,15 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from app.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schema.otp import OtpRequest, OtpVerifyRequest, OtpResponse
 from app.service.otp import OtpService
+from app.core.limiter import limiter
 
 
 router = APIRouter()
 
 
 @router.post("/send", response_model=OtpResponse)
-async def send_otp(otp_request: OtpRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("3/minute")
+async def send_otp(request: Request, otp_request: OtpRequest, db: AsyncSession = Depends(get_db)):
     """
     Send OTP endpoint
     - Validates organization and user
@@ -35,7 +37,8 @@ async def send_otp(otp_request: OtpRequest, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/verify", response_model=OtpResponse)
-async def verify_otp(otp_verify: OtpVerifyRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")
+async def verify_otp(request: Request, otp_verify: OtpVerifyRequest, db: AsyncSession = Depends(get_db)):
     """
     Verify OTP endpoint
     - Validates OTP code

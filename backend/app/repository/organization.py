@@ -15,6 +15,12 @@ class OrganizationRepository:
         )
         return result.scalar_one_or_none()
     
+    async def get_org_by_code(self, org_code: str) -> Organization | None:
+        result = await self.db.execute(
+            select(Organization).where(Organization.org_code == org_code)
+        )
+        return result.scalar_one_or_none()
+    
     async def create_org(self, org_data: OrganizationCreate) -> Organization:
         # build Organization from pydantic model fields
         try:

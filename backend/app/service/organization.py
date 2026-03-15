@@ -13,6 +13,13 @@ class OrganizationService:
             raise ValueError("Organization not found")
         return OrganizationResponse.model_validate(org)
     
+    async def get_org_by_code(self, org_code: str) -> OrganizationResponse:
+        org = await self.repo.get_org_by_code(org_code)
+        if not org:
+            raise ValueError("Organization not found")
+        return OrganizationResponse.model_validate(org)
+    
+    
     async def create_org(self, org_data: OrganizationCreate) -> OrganizationResponse:
         org = await self.repo.create_org(org_data)
         return OrganizationResponse.model_validate(org)

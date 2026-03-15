@@ -6,6 +6,7 @@ from app.repository.otp import OtpRepository
 from app.schema.auth import LoginRequest
 from app.schema.otp import OtpVerifyRequest
 import os
+from app.repository.organization import OrganizationRepository
 
 SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 ALGORITHM = "HS256"
@@ -20,7 +21,7 @@ def _create_token(payload: dict, expires_delta: timedelta) -> str:
 
 class AuthService:
     def __init__(self, db: AsyncSession):
-        self.repo = AuthRepository(db)
+        self.repo = AuthRepository(db,OrganizationRepository(db))
         self.otp_repo = OtpRepository(db)
 
     async def login(self, login_data: LoginRequest) -> dict:

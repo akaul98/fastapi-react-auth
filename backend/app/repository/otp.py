@@ -1,5 +1,3 @@
-import time
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 from app.model.otp import OTP, OTPStatusEnum
@@ -43,38 +41,6 @@ class OtpRepository:
         otp_record.expires_at = datetime.now(timezone.utc) + timedelta(minutes=5)  # OTP expires in 5 minutes
         
         self.db.add(otp_record)
-        await self.db.commit()
-        await self.db.refresh(otp_record)
-        
-        return otp_record
-
-    async def verify_otp(self, user_id: str, organization_id: str, phone_number: str, otp_code: str):
-        """Verify the OTP and update its status to verified"""
-        query = select(OTP).where(
-            and_(
-                OTP.user_id == user_id,
-                OTP.organization_id == organization_id,
-                OTP.phone == phone_number,
-                OTP.code == otp_code,
-                OTP.status == OTPStatusEnum.PENDING
-            )
-        ).order_by(OTP.created_at.desc())
-        
-        result = await self.db.execute(query)
-        otp_record = result.scalar_one_or_none()
-        
-        if not otp_record:
-            return None
-        
-        # Check if OTP has expired
-        if datetime.now(timezone.utc) > otp_record.expires_at:
-            otp_record.status = OTPStatusEnum.EXPIRED
-            await self.db.commit()
-            return None
-        
-        # Mark OTP as verified
-        otp_record.status = OTPStatusEnum.VERIFIED
-        otp_record.verified_at = datetime.now(timezone.utc)
         await self.db.commit()
         await self.db.refresh(otp_record)
         

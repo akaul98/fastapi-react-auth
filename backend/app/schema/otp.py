@@ -1,7 +1,6 @@
-from pydantic import BaseModel
 from typing import Optional
-
 from app.schema.base import BaseSchema
+from app.model import otp
 
 
 class OtpRequest(BaseSchema):
@@ -15,6 +14,8 @@ class OtpVerifyRequest(BaseSchema):
     organization_id: str
     otp_code: str
     phone_number: str
+    otp_id: str
+    
 
 
 class OtpResponse(BaseSchema):

@@ -5,7 +5,6 @@ from app.schema.users import UserCreate, UserResponse,UserUpdate
 
 class UserService:
     def __init__(self, db: AsyncSession):
-        self.db = db
         self.repo = UserRepository(db)
 
     async def get_all_users(self, org_id: str) -> list[UserResponse]:

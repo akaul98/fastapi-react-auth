@@ -39,7 +39,7 @@ class AuthRepository:
             .join(OTP, OTP.user_id == User.id)
             .where(
                 (OTP.id == otp_id) &
-                (OTP.status == OTPStatusEnum.VERIFIED)
+                (OTP.status == OTPStatusEnum.PENDING)
             )
         )
         row = result.first()

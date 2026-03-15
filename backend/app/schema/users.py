@@ -1,6 +1,6 @@
 
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import  EmailStr
 from datetime import datetime
 
 from app.schema.base import BaseSchema

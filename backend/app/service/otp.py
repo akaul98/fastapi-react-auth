@@ -5,7 +5,6 @@ from app.repository.otp import OtpRepository
 
 class OtpService:
     def __init__(self, db: AsyncSession):
-        self.db = db
         self.repo = OtpRepository(db)
 
     async def send_otp(self, otp_request: OtpRequest):
@@ -39,22 +38,4 @@ class OtpService:
             "message": "OTP sent successfully"
         }
 
-    async def verify_otp(self, otp_verify: OtpVerifyRequest):
-        """
-        Verify OTP and update status to verified
-        """
-        otp_record = await self.repo.verify_otp(
-            otp_verify.user_id,
-            otp_verify.organization_id,
-            otp_verify.phone_number,
-            otp_verify.otp_code
-        )
-        
-        if not otp_record:
-            raise ValueError("Invalid or expired OTP")
-        
-        return {
-            "verified": True,
-            "otp_id": otp_record.id,
-            "message": "OTP verified successfully"
-        }
+    

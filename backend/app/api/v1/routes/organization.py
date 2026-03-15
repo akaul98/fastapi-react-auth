@@ -15,13 +15,10 @@ router = APIRouter()
 
 @router.get("get_org_list_by_id/{org_id}",response_model=OrganizationResponse)
 async def list_organizations(db: AsyncSession = Depends(get_db), org_id: str = "", _: CurrentUser = Depends(get_current_user)):
-    logger.info(f"Fetching organization with ID: {org_id}")
     try:
         result = await OrganizationService(db).get_org(org_id)
-        logger.debug(f"Organization found: {result}")
         return result
     except ValueError as e:
-        logger.error(f"Organization not found: {org_id}, Error: {str(e)}")
         raise HTTPException(404, str(e))
 
 @router.post("create_org",response_model=OrganizationResponse)
@@ -33,29 +30,23 @@ async def create_organization(org: OrganizationCreate, db: AsyncSession = Depend
 
 @router.get("get_org_list",response_model=list[OrganizationResponse])
 async def get_organizations(db: AsyncSession = Depends(get_db), _: CurrentUser = Depends(get_current_user)):
-    logger.info("Fetching all organizations")
     orgs = await OrganizationService(db).get_all_orgs()
-    logger.debug(f"Organizations found: {orgs}")
     return [OrganizationResponse.model_validate(org) for org in orgs]
 
 @router.delete("delete_org/{org_id}",response_model=dict)
 async def delete_organization(org_id: str, db: AsyncSession = Depends(get_db), _: CurrentUser = Depends(get_current_user)):
-    logger.info(f"Deleting organization with ID: {org_id}")
     try:
         await OrganizationService(db).delete_org(org_id)
-        logger.debug(f"Organization deleted: {org_id}")
         return {"detail": "Organization deleted"}
     except ValueError as e:
-        logger.error(f"Error deleting organization with ID: {org_id}, Error: {str(e)}")
+        raise HTTPException(404, str(e))
         raise HTTPException(404, str(e))
 
 @router.put("update_org/{org_id}",response_model=OrganizationResponse)
 async def update_organization(org_id: str, org: OrganizationUpdate, db: AsyncSession = Depends(get_db), _: CurrentUser = Depends(get_current_user)):
-    logger.info(f"Updating organization with ID: {org_id}")
     try:
         updated_org = await OrganizationService(db).update_org(org_id, org)
-        logger.debug(f"Organization updated: {updated_org}")
         return OrganizationResponse.model_validate(updated_org)
     except ValueError as e:
-        logger.error(f"Error updating organization with ID: {org_id}, Error: {str(e)}")
+        raise HTTPException(404, str(e))
         raise HTTPException(404, str(e))

@@ -45,21 +45,10 @@ class AuthService:
         }
 
     async def verify_and_generate_tokens(self, otp_verify: OtpVerifyRequest) -> dict:
-        otp_record = await self.otp_repo.verify_otp(
-            otp_verify.user_id,
-            otp_verify.organization_id,
-            otp_verify.phone_number,
-            otp_verify.otp_code
-        )
-
-        if not otp_record:
-            raise ValueError("Invalid or expired OTP")
-
-        result = await self.repo.get_user_and_org_by_verified_otp(otp_record.id)
-
+  
+        result = await self.repo.get_user_and_org_by_verified_otp(otp_verify.otp_id)
         if not result:
-            raise ValueError("User or organization not found")
-
+            raise ValueError("Invalid or expired OTP")
         user, org = result
 
         claims = {

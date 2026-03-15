@@ -8,7 +8,6 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from app.core.limiter import limiter
-from backend import app
 
 # Configure logging
 logging.basicConfig(
@@ -16,8 +15,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-
 
 def create_app()->FastAPI:
   logger.info("Creating FastAPI application...")
@@ -34,8 +31,6 @@ def create_app()->FastAPI:
 
   app.state.limiter = limiter
   app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
-
-
   app.add_middleware(SlowAPIMiddleware)
   app.add_middleware(
       CORSMiddleware,

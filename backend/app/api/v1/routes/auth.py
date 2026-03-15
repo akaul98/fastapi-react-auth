@@ -9,7 +9,7 @@ from app.core.limiter import limiter
 router = APIRouter()
 
 @router.post("/login", response_model=OtpResponse)
-@limiter.limit("5/minute")
+@limiter.limit("2/minute")
 async def login(request: Request, login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
     try:
         result = await AuthService(db).login(login_data)

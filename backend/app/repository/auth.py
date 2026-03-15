@@ -15,12 +15,15 @@ class AuthRepository:
             .join(Organization, User.organization_id == Organization.id)
             .where(
                 (User.email == email) &
-                (Organization.org_code == org_code) &
+                (Organization.id == org_code) &
                 (User.status == True) &
                 (Organization.status == True)
             )
         )
-        return result.scalars().first()
+        
+        resp= result.scalars().first()
+        return resp
+    
 
     async def get_user_and_org_by_verified_otp(self, otp_id: str) -> tuple[User, Organization] | None:
         result = await self.db.execute(

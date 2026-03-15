@@ -26,5 +26,5 @@ class OTP(CommonBase, Base):
     status: Mapped[OTPStatusEnum] = mapped_column(
         SQLEnum(OTPStatusEnum), default=OTPStatusEnum.PENDING
     )
-    expires_at: Mapped[datetime] = mapped_column(DateTime)
-    verified_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

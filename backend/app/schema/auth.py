@@ -16,3 +16,10 @@ class TokenResponse(BaseSchema):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+
+
+class CurrentUser(BaseModel):
+    user_id: str
+    org_id: str
+    org_code: str
+    theme: str

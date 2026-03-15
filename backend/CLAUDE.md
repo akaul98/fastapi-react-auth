@@ -21,7 +21,7 @@ backend/
     │   ├── users.py
     │   ├── organization.py
     │   ├── otp.py
-    │   └── auth.py          # Not yet registered in main.py
+    │   └── auth.py          # Registered at /api/auth
     ├── service/             # Business logic layer
     ├── repository/          # DB query layer
     ├── model/               # SQLAlchemy ORM models
@@ -94,6 +94,9 @@ API docs: `http://localhost:8000/api/docs`
 | DELETE | `/api/users/{user_id}/{org_id}` | Soft-delete user |
 | POST | `/api/otp/send` | Send OTP |
 | POST | `/api/otp/verify` | Verify OTP |
+| POST | `/api/auth/login` | Login (sends OTP) |
+| POST | `/api/auth/verify` | Verify OTP + get tokens |
+| POST | `/api/auth/refresh` | Refresh access token |
 
 ## OTP Flow
 1. `POST /api/otp/send` — validates user+org exist, generates 5-digit code via `secrets.randbelow`, stores with 5-min expiry

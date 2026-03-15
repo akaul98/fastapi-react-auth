@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 from app.model.user import User
 from app.model.organization import Organization
 from app.model.otp import OTP, OTPStatusEnum
@@ -32,11 +32,16 @@ class AuthRepository:
             .join(OTP, OTP.user_id == User.id)
             .where(
                 (OTP.id == otp_id) &
-                (OTP.status == OTPStatusEnum.VERIFIED)&
-                (OTP.verified_at==None)
+                (OTP.status == OTPStatusEnum.VERIFIED)
             )
         )
         row = result.first()
         if not row:
             return None
+
+        await self.db.execute(
+            update(OTP).where(OTP.id == otp_id).values(status=OTPStatusEnum.EXPIRED)
+        )
+        await self.db.commit()
+
         return row[0], row[1]

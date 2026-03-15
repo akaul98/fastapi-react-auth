@@ -1,25 +1,20 @@
 # Backend TODO — Pending Improvements
 
-## Security (High Priority)
+## Bugs
 
-### #15 — No JWT auth middleware on protected routes
-**File:** `app/api/v1/routes/`
+### #28 — Wrong column in login query
+**File:** `app/repository/auth.py:18`
 
-All routes are currently unprotected. There is no `get_current_user` dependency.
-Fix: Create a `get_current_user` dependency that decodes the access token and
-inject it into routes that require authentication.
-
-### #27 — OTP not invalidated after use
-**File:** `app/repository/otp.py`
-
-After a successful `POST /api/auth/verify`, the verified OTP record remains in
-`VERIFIED` status and can be re-submitted to `POST /api/otp/verify`.
-Fix: Check that the OTP has not already been used for token generation, or
-add a `used_at` timestamp and reject re-use.
+`Organization.id == org_code` compares the UUID primary key against the org_code string.
+Should be:
+```python
+Organization.org_code == org_code
+```
+This means login currently only works if the client passes the org's UUID, not its human-readable code.
 
 ---
 
-## Configuration
+## Security (High Priority)
 
 ### #16 — SQL echo always enabled
 **File:** `app/database.py:10`
@@ -39,30 +34,51 @@ Fix:
 debug=os.getenv("APP_DEBUG", "false") == "true"
 ```
 
+### #29 — No logout / token revocation
+There is no `POST /api/auth/logout` endpoint and no token blacklist.
+An access token remains valid for 15 minutes after logout; a refresh token for 7 days.
+Fix: Introduce a Redis-backed blacklist and check it in `get_current_user`.
+
+### #30 — OTP brute force not fully mitigated
+Rate limiting is per IP (5/minute). An attacker rotating IPs can still brute-force a 5-digit OTP (100,000 combinations).
+Fix: Track failed OTP attempts per `user_id` in the DB or Redis and lock after N failures.
+
+---
+
+## Configuration
+
+### #31 — No .env.example
+There is no template documenting required environment variables.
+Fix: Add `.env.example` with:
+```
+DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/db
+JWT_SECRET_KEY=changeme
+CORS_ORIGINS=http://localhost:3000
+SQL_ECHO=false
+APP_DEBUG=false
+```
+
 ---
 
 ## Code Quality
 
-### #8 (Remaining) — Redundant logic in UserService.delete_user_by_id
-**File:** `app/service/userService.py:19-24`
+### #8 — Unused `self.db` in services
+**File:** `app/service/userService.py:8`, `app/service/otp.py:8`
 
-`user.status = False` on line 22 is set before calling `self.repo.delete_user_by_id`,
-which fetches the user again and also sets `status = False`. The status assignment
-in the service is redundant and causes the user to be fetched twice.
-Also, `self.db` stored in `__init__` is now unused.
-Fix: Remove line 22 (`user.status = False`) and the `self.db = db` assignment.
+Both services store `self.db = db` in `__init__` but only use `self.repo`.
+Fix: Remove the `self.db = db` line in both.
 
 ### #18 — Inconsistent filename casing
 **File:** `app/service/userService.py`
 
 All other service files use snake_case (`organization.py`, `otp.py`, `auth.py`).
-Fix: Rename to `user.py` or `user_service.py` and update the import in `routes/users.py`.
+Fix: Rename to `user_service.py` and update the import in `routes/users.py`.
 
 ### #19 — Inconsistent route function naming
 **File:** `app/api/v1/routes/users.py`
 
-Functions use camelCase (`getAllUsers`, `getUserById`, `deleteUserById`, `createUser`, `updateUser`)
-while `organization.py` uses snake_case. FastAPI function names show up in tracebacks and logs.
+Functions use camelCase (`getAllUsers`, `getUserById`, etc.)
+while `organization.py` uses snake_case. FastAPI function names appear in tracebacks and logs.
 Fix: Rename to snake_case (`get_all_users`, `get_user_by_id`, etc.).
 
 ### #20 — Unnecessary try/except in create_org
@@ -74,12 +90,12 @@ try:
 except Exception:
     raise ValueError("Invalid organization data")
 ```
-`model_dump()` on a valid Pydantic model never raises a generic `Exception`.
-This swallows real errors (e.g. DB errors, attribute errors) and replaces them with a misleading message.
+`model_dump()` on a valid Pydantic model never raises. This swallows real errors (DB errors,
+attribute errors) and replaces them with a misleading message.
 Fix: Remove the try/except entirely.
 
 ### #21 — Dead return value in OtpService.verify_otp
-**File:** `app/service/otp.py:56`
+**File:** `app/service/otp.py:57`
 
 The dict returned includes `"verified": True`, but the route handler only reads
 `message` and `otp_id`. The `verified` key is never used.
@@ -88,14 +104,23 @@ Fix: Remove it from the return dict.
 ### #22 — Duplicate OTP verification flows
 **File:** `app/service/otp.py`, `app/service/auth.py`
 
-`POST /api/otp/verify` (OtpService) and `POST /api/auth/verify` (AuthService) both verify
-OTPs using `OtpRepository.verify_otp`. The difference is only the response shape.
-Consider consolidating or clearly documenting which endpoint is intended for which flow.
+`POST /api/otp/verify` (OtpService) and `POST /api/auth/verify` (AuthService) both call
+`OtpRepository.verify_otp`. The difference is only the response shape (OtpResponse vs TokenResponse).
+Consider removing `POST /api/otp/verify` entirely and making `/api/auth/verify` the single verify endpoint.
 
-### Unused imports (new)
-- `app/repository/otp.py:1` — `import time` is unused, should be removed.
+### #32 — POST create endpoints return 200 instead of 201
+**File:** `app/api/v1/routes/users.py:27`, `app/api/v1/routes/organization.py:25`
+
+`create_user` and `create_org` do not declare `status_code=201`.
+Fix:
+```python
+@router.post("create_user", response_model=UserResponse, status_code=201)
+```
+
+### Unused imports
+- `app/repository/otp.py:1` — `import time` is unused, remove it.
 - `app/schema/users.py:3` — `BaseModel, ConfigDict` are imported but unused since
-  schemas now extend `BaseSchema`.
+  schemas extend `BaseSchema`. Remove them.
 
 ---
 

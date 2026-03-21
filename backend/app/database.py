@@ -8,7 +8,7 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://myuser:mypassword@127.0.0.1:5432/mydatabase")
 engine = create_async_engine(
     DATABASE_URL,
-    echo=True  # SQL logs (disable in prod)
+    echo=os.getenv("SQL_ECHO") == "True"  # SQL logs (disable in prod)
 )
 
 AsyncSessionLocal = async_sessionmaker(

@@ -13,7 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useAuth } from '@/context/auth-context'
 
 const loginSchema = z.object({
-  phone: z.string().email('Invalid email address'),
+  email: z.string().email('Invalid email address'),
   orgCode: z.string(),
 })
 
@@ -72,10 +72,10 @@ export default function LoginPage() {
               id="email"
               placeholder="Enter your email"
               type="email"
-              {...register('phone')}
+              {...register('email')}
             />
-            {errors.phone && (
-              <p className="text-sm text-red-600">{errors.phone.message}</p>
+            {errors.email && (
+              <p className="text-sm text-red-600">{errors.email.message}</p>
             )}
           </div>
           <div className="space-y-2">

@@ -31,7 +31,8 @@ export interface OTP {
   id: string
   user_id?: string
   organization_id?: string
-  phone: string
+  email: string
+  orgCode: string
   code: string
   status: string
   expires_at: string
@@ -41,7 +42,8 @@ export interface OTP {
 }
 
 export interface OTPSendRequest {
-  phone: string
+  email: string
+  orgCode: string
 }
 
 export interface OTPSendResponse {
@@ -65,7 +67,7 @@ export interface LoginContextType {
   token: string | null
   loading: boolean
   error: string | null
-  login: (phone: string) => Promise<{ otp_id: string }>
+  login: (email: string, orgCode: string) => Promise<{ otp_id: string }>
   verifyOTP: (otp_id: string, code: string) => Promise<void>
   logout: () => void
 }

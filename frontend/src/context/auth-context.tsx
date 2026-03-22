@@ -3,6 +3,7 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
 import type { LoginContextType, User, OTPSendResponse, OTPVerifyResponse } from '@/lib/types'
 import { apiClient, getErrorMessage } from '@/lib/api'
+import { email } from 'zod/v4'
 
 export const AuthContext = createContext<LoginContextType | undefined>(undefined)
 
@@ -46,8 +47,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const verifyOTP = useCallback(async (otp_id: string, code: string) => {
     try {
       setError(null)
-      const response = await apiClient.post<OTPVerifyResponse>('/api/otp/verify', {
+      const response = await apiClient.post<OTPVerifyResponse>('/api/auth/verify', {
         otp_id,
+        user_id,
+        organization_id,
+        email,
         code,
       })
 

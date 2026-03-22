@@ -42,6 +42,8 @@ export default function LoginPage() {
       sessionStorage.setItem('pending_email', data.email)
       sessionStorage.setItem('pending_org_code', data.orgCode)
       sessionStorage.setItem('pending_otp_id', result.otp_id)
+      sessionStorage.setItem('pending_user_id', result.user_id)
+      sessionStorage.setItem('pending_organization_id', result.organization_id)
       router.push('/verify')
     } catch (err) {
       setError('Failed to send OTP. Please try again.')
@@ -67,9 +69,9 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="phone">Email</Label>
             <Input
-              id="email"
+              id="phone"
               placeholder="Enter your email"
               type="email"
               {...register('email')}

@@ -26,7 +26,6 @@ class AuthRepository:
                 (orgData.status == True)
             )
         )
-        
         resp= result.scalars().first()
         return resp
     

@@ -49,6 +49,10 @@ export interface OTPSendRequest {
 export interface OTPSendResponse {
   message: string
   otp_id: string
+  user_id: string
+  organization_id: string
+  email: string
+  otp_code: string
 }
 
 export interface OTPVerifyRequest {
@@ -67,8 +71,8 @@ export interface LoginContextType {
   token: string | null
   loading: boolean
   error: string | null
-  login: (email: string, orgCode: string) => Promise<{ otp_id: string }>
-  verifyOTP: (otp_id: string, code: string) => Promise<void>
+  login: (email: string, orgCode: string) => Promise<{ otp_id: string, user_id: string, organization_id: string, email: string, otp_code: string }>
+  verifyOTP: (otp_id: string, user_id: string, organization_id: string, email: string, otp_code: string) => Promise<void>
   logout: () => void
 }
 

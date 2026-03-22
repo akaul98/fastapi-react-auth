@@ -41,7 +41,11 @@ class AuthService:
 
         return {
             "message": "OTP sent successfully",
-            "otp_id": otp_record.id
+            "otp_id": otp_record.id,
+            "user_id": user.id,
+            "organization_id": user.organization_id,
+            "email": user.email,
+            "otp_code": otp_record.code
         }
 
     async def verify_and_generate_tokens(self, otp_verify: OtpVerifyRequest) -> dict:

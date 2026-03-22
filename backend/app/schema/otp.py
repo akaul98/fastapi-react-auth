@@ -1,19 +1,19 @@
 from typing import Optional
+from pydantic import EmailStr
 from app.schema.base import BaseSchema
-from app.model import otp
 
 
 class OtpRequest(BaseSchema):
     user_id: str
     organization_id: str
-    phone_number: str
+    email: EmailStr
 
 
 class OtpVerifyRequest(BaseSchema):
     user_id: str
     organization_id: str
     otp_code: str
-    phone_number: str
+    email: EmailStr
     otp_id: str
     
 
@@ -21,3 +21,7 @@ class OtpVerifyRequest(BaseSchema):
 class OtpResponse(BaseSchema):
     message: str
     otp_id: Optional[str] = None
+    email:EmailStr
+    organization_id: str
+    user_id: str
+    otp_code: Optional[str] = None

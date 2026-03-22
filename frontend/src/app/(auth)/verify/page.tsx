@@ -27,7 +27,10 @@ export default function VerifyPage() {
 
   useEffect(() => {
     const storedOtpId = sessionStorage.getItem('pending_otp_id')
-    if (!storedOtpId) {
+    const storedUserId = sessionStorage.getItem('pending_user_id')
+    const storedOrganizationId = sessionStorage.getItem('pending_organization_id')
+    const storedEmail = sessionStorage.getItem('pending_email')
+    if (!storedOtpId || !storedUserId || !storedOrganizationId || !storedEmail) {
       router.push('/login')
       return
     }
@@ -48,9 +51,20 @@ export default function VerifyPage() {
     setIsLoading(true)
     setError(null)
     try {
-      await verifyOTP(otp_id, data.code)
+      const email = sessionStorage.getItem('pending_email')
+      const orgCode = sessionStorage.getItem('pending_org_code')
+      const userId = sessionStorage.getItem('pending_user_id')
+      const organizationId = sessionStorage.getItem('pending_organization_id')
+      if (!email || !orgCode || !userId || !organizationId) {
+        setError('Missing required information. Please try again.')
+        return
+      }
+      await verifyOTP(otp_id, userId, organizationId, email, data.code)
       // Clear session storage
-      sessionStorage.removeItem('pending_phone')
+      sessionStorage.removeItem('pending_email')
+      sessionStorage.removeItem('pending_org_code')
+      sessionStorage.removeItem('pending_user_id')
+      sessionStorage.removeItem('pending_organization_id')
       sessionStorage.removeItem('pending_otp_id')
       router.push('/dashboard')
     } catch (err) {

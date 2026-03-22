@@ -36,7 +36,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         org_code: orgCode,
       })
-      return { otp_id: response.data.otp_id }
+      return { otp_id: response.data.otp_id,
+        user_id: response.data.user_id,
+        organization_id: response.data.organization_id,
+        email: response.data.email,
+        otp_code: response.data.otp_code
+        
+       }
     } catch (err) {
       const message = getErrorMessage(err)
       setError(message)
@@ -44,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const verifyOTP = useCallback(async (otp_id: string, code: string) => {
+  const verifyOTP = useCallback(async (otp_id: string, user_id: string, organization_id: string, email: string, otp_code: string) => {
     try {
       setError(null)
       const response = await apiClient.post<OTPVerifyResponse>('/api/auth/verify', {
@@ -52,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user_id,
         organization_id,
         email,
-        code,
+        otp_code,
       })
 
       const newToken = response.data.token

@@ -13,7 +13,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useAuth } from '@/context/auth-context'
 
 const loginSchema = z.object({
-  phone: z.string().min(10, 'Phone number must be at least 10 digits').max(15, 'Phone number must be at most 15 digits'),
+  phone: z.string().email('Invalid email address'),
+  orgCode: z.string(),
 })
 
 type LoginForm = z.infer<typeof loginSchema>
@@ -36,9 +37,10 @@ export default function LoginPage() {
     setIsLoading(true)
     setError(null)
     try {
-      const result = await login(data.phone)
-      // Store phone for next page
-      sessionStorage.setItem('pending_phone', data.phone)
+      const result = await login(data.email, data.orgCode)
+      // Store email and organization code for next page
+      sessionStorage.setItem('pending_email', data.email)
+      sessionStorage.setItem('pending_org_code', data.orgCode)
       sessionStorage.setItem('pending_otp_id', result.otp_id)
       router.push('/verify')
     } catch (err) {
@@ -53,7 +55,7 @@ export default function LoginPage() {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Welcome Back</CardTitle>
         <CardDescription>
-          Enter your phone number to receive an OTP
+          Enter your email and organization code to receive an OTP
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -65,15 +67,27 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="phone"
-              placeholder="+1 (555) 000-0000"
-              type="tel"
+              id="email"
+              placeholder="Enter your email"
+              type="email"
               {...register('phone')}
             />
             {errors.phone && (
               <p className="text-sm text-red-600">{errors.phone.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="orgCode">Organization Code</Label>
+            <Input
+              id="orgCode"
+              placeholder="Enter your organization code"
+              type="text"
+              {...register('orgCode')}
+            />
+            {errors.orgCode && (
+              <p className="text-sm text-red-600">{errors.orgCode.message}</p>
             )}
           </div>
 

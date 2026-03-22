@@ -28,11 +28,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }, [])
 
-  const login = useCallback(async (phone: string) => {
+  const login = useCallback(async (phone: string, orgCode: string) => {
     try {
       setError(null)
       const response = await apiClient.post<OTPSendResponse>('/api/otp/send', {
         phone,
+        orgCode,
       })
       return { otp_id: response.data.otp_id }
     } catch (err) {
